@@ -5,3 +5,4 @@ dump_psnr
 dump_psnrhvs
 y4m2png
 png2y4m
+dump_ssim_fast

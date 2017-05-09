@@ -39,7 +39,7 @@ QPFX :=
 endif
 
 # build targets
-TARGETS := dump_ssim dump_fastssim dump_psnr dump_psnrhvs png2y4m y4m2png
+TARGETS := dump_ssim dump_fastssim dump_psnr dump_psnrhvs png2y4m y4m2png dump_ssim_fast
 dump_ssim_SOURCES := src/dump_ssim.c src/vidinput.c src/y4m_input.c
 dump_fastssim_SOURCES := src/dump_fastssim.c src/vidinput.c src/y4m_input.c
 dump_psnr_SOURCES := src/dump_psnr.c src/vidinput.c src/y4m_input.c
@@ -49,6 +49,8 @@ y4m2png_SOURCES := src/vidinput.c src/y4m_input.c src/y4m2png.c
 
 png2y4m_LDLIBS := -lpng -lz
 y4m2png_LDLIBS := -lpng -lz
+
+dump_ssim_fast_SOURCES := src/dump_ssim_fast.c src/vidinput.c src/y4m_input.c
 
 # the following variable is used below to generate build rules
 # for each of the executables in the TARGETS variable.
