@@ -75,3 +75,6 @@ $(foreach targ,$(TARGETS),$(eval $(call GEN_TARGET_RULE,$(targ))))
 clean:
 	rm -f src/*.o
 	rm -f $(TARGETS)
+
+check: dump_ssim dump_ssim_fast
+	cd tests/ && ./dump-ssim-fast.test

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo ">>> Running dump_ssim..."
+time ../dump_ssim test_vectors/1.y4m test_vectors/2.y4m >dump_ssim.txt
+
+echo ">>> Running dump_ssim_fast..."
+time ../dump_ssim_fast test_vectors/1.y4m test_vectors/2.y4m >dump_ssim_fast.txt
+
+diff dump_ssim.txt dump_ssim_fast.txt
+
+if [ "$?" != "0" ]
+then
+  echo "dump_ssim_fast output differs from dump_ssim"
+  rm *.txt
+  exit 1
+else
+  echo "outputs are the same"
+  rm *.txt
+  exit 0
+fi
