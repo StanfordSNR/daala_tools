@@ -232,6 +232,7 @@ int main(int _argc,char *_argv[]){
   double             cweight;
   double             par;
   int                frameno;
+  int                ssim_nframes;  // num of frames used to compute SSIM
   FILE              *fin;
   int                long_option_index;
   int                c;
@@ -345,6 +346,7 @@ int main(int _argc,char *_argv[]){
   bool launching = true;
   bool finishing = false;
   frameno = 0;
+  ssim_nframes = 0;
 
   while (true) {
     int child_num = -1;
@@ -528,6 +530,7 @@ int main(int _argc,char *_argv[]){
       }
     }
     frameno++;
+    ssim_nframes++;
   }
 
   if (cpids != NULL) {
@@ -539,11 +542,11 @@ int main(int _argc,char *_argv[]){
 
   if(!luma_only){
     printf("Total: %-8G  (Y': %-8G  Cb: %-8G  Cr: %-8G)\n",
-        convert(gssim[0]+cweight*(gssim[1]+gssim[2]),(1+2*cweight)*frameno),
-        convert(gssim[0],frameno),convert(gssim[1],frameno),
-        convert(gssim[2],frameno));
+        convert(gssim[0]+cweight*(gssim[1]+gssim[2]),(1+2*cweight)*ssim_nframes),
+        convert(gssim[0],ssim_nframes),convert(gssim[1],ssim_nframes),
+        convert(gssim[2],ssim_nframes));
   }
-  else printf("Total: %-8G\n",convert(gssim[0],frameno));
+  else printf("Total: %-8G\n",convert(gssim[0],ssim_nframes));
   video_input_close(&vid1);
   video_input_close(&vid2);
   return EXIT_SUCCESS;
