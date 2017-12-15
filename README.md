@@ -7,9 +7,9 @@ At the moment, the following tools are split out:
 
 - `dump_psnrhvs`
 - `dump_psnr`
-- `dump_ssim`&#151;added `-p` (per-frame parallelism) and `-l` (max # frames) switch
+- `dump_ssim`—added `-p`, `-l` and `-n` switches
 - `dump_fastssim`
-- `png2y4m`&#151;added `-d` and `-i` switches
+- `png2y4m`—added `-d` and `-i` switches
 - `y4m2png`
 
 You can find some build instructions in the [mu repository](https://github.com/excamera/mu).
@@ -43,4 +43,3 @@ Any other code is © 2016 alfalfa project and contributors.
     LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
     NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
