@@ -21,12 +21,13 @@
 #endif
 #include "getopt.h"
 
-const char *optstring = "frsyp:l:";
+const char *optstring = "frsyn:p:l:";
 const struct option options[]={
   {"frame-type",no_argument,NULL,'f'},
   {"raw",no_argument,NULL,'r'},
   {"summary",no_argument,NULL,'s'},
   {"luma-only",no_argument,NULL,'y'},
+  {"step",required_argument,NULL,'n'},
   {"parallel",required_argument,NULL,'p'},
   {"limit",required_argument,NULL,'l'},
   {NULL,0,NULL,0}
@@ -206,6 +207,7 @@ static void usage(char *_argv[]){
       "      -r --raw        Show raw SSIM scores, instead of 10*log10(1/(1-ssim)).\n"
       "      -s --summary                  Only output the summary line.\n"
       "      -y --luma-only                Only output values for the luma channel.\n"
+      "      -n <n>, --step=<n>            Compute on one frame of every <n> frames.\n"
       "      -p <npar>, --parallel=<npar>  Run <npar> parallel workers.\n"
       "      -l <lim>, --limit=<lim>       Stop after <lim> frames.\n",_argv[0]);
 }
@@ -234,6 +236,7 @@ int main(int _argc,char *_argv[]){
   int                long_option_index;
   int                c;
   int                xstride;
+  int                step = 0;
   int                npar = 0;
   int                nframes = 0;
 #ifdef _WIN32
@@ -251,6 +254,7 @@ int main(int _argc,char *_argv[]){
       case 'r':convert=convert_ssim_raw;break;
       case 's':summary_only=1;break;
       case 'y':luma_only=1;break;
+      case 'n':step=atoi(optarg);break;
       case 'p':npar=atoi(optarg);break;
       case 'l':nframes=atoi(optarg);break;
       default:{
@@ -258,6 +262,11 @@ int main(int _argc,char *_argv[]){
                 exit(EXIT_FAILURE);
               }break;
     }
+  }
+  if (step < 0) {
+    fprintf(stderr, "ERROR: step < 0 doesn't make any sense. Refusing to proceed.\n");
+    usage(_argv);
+    exit(EXIT_FAILURE);
   }
   if (npar > 0 && npar < 4) {
     fprintf(stderr, "ERROR: 0 < npar < 4 doesn't make any sense. Refusing to proceed.\n");
@@ -411,23 +420,32 @@ int main(int _argc,char *_argv[]){
 
     if (!finishing) {
       bool have_error = false;
-      if (nframes > 0 && frameno == nframes) {
-        have_error = true;
-      } else {
-        ret1=video_input_fetch_frame(&vid1,f1,tag1);
-        ret2=video_input_fetch_frame(&vid2,f2,tag2);
+      while (!have_error) {
+        if (nframes > 0 && frameno == nframes) {
+          have_error = true;
+        } else {
+          ret1=video_input_fetch_frame(&vid1,f1,tag1);
+          ret2=video_input_fetch_frame(&vid2,f2,tag2);
 
-        if ( (ret1==0&&ret2==0) || (ret1<0||ret2<0) ) {
-          have_error = true;
-        } else if(ret1==0){
-          fprintf(stderr,"%s ended before %s.\n",
-              _argv[optind],_argv[optind+1]);
-          have_error = true;
-        }
-        else if(ret2==0){
-          fprintf(stderr,"%s ended before %s.\n",
-              _argv[optind+1],_argv[optind]);
-          have_error = true;
+          if ( (ret1==0&&ret2==0) || (ret1<0||ret2<0) ) {
+            have_error = true;
+          } else if(ret1==0){
+            fprintf(stderr,"%s ended before %s.\n",
+                _argv[optind],_argv[optind+1]);
+            have_error = true;
+          }
+          else if(ret2==0){
+            fprintf(stderr,"%s ended before %s.\n",
+                _argv[optind+1],_argv[optind]);
+            have_error = true;
+          }
+
+          if (step > 1 && frameno % step != 0) {
+            // skip computing SSIM on the current frame
+            frameno++;
+          } else {
+            break;
+          }
         }
       }
 
