@@ -12,7 +12,10 @@ At the moment, the following tools are split out:
 - `png2y4m`—added `-d` and `-i` switches
 - `y4m2png`
 
-You can find some build instructions in the [mu repository](https://github.com/excamera/mu).
+Dependencies:
+
+- `libogg-dev`
+- `libpng-dev`
 
 ## Copying ##
 
